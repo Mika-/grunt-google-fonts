@@ -1,0 +1,15 @@
+{
+  "name": "grunt-google-fonts",
+  "version": "0.0.1",
+  "description": "Use Google Fonts locally",
+  "main": "tasks/index.js",
+  "keywords": [
+    "grunt",
+    "google fonts"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.4.2",
+    "cssparser": "^0.2.2"
+  }
+}
