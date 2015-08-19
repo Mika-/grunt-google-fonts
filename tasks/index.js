@@ -191,6 +191,8 @@ module.exports = function(grunt) {
       path: path.path
     }, function(res) {
 
+      res.setEncoding('binary');
+
       var buffer = '';
 
       res.on('data', function(chunk) {
@@ -200,7 +202,7 @@ module.exports = function(grunt) {
       res.on('end', function() {
 
         if (res.statusCode === 200)
-          cb(buffer);
+          cb(new Buffer(buffer, 'binary'));
 
       });
 
