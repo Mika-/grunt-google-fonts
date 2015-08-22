@@ -14,7 +14,8 @@ grunt.initConfig({
   googlefonts: {
     build: {
       options: {
-        fontDir: 'fonts/',
+        fontPath: 'fonts/',
+        cssFile: 'fonts/fonts.css',
         formats: {
           eot: true,
           ttf: true,

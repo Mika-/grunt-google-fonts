@@ -18,6 +18,7 @@ var parser = new cssparser.Parser();
 module.exports = function(grunt) {
 
   var options = {};
+  var cssRules = [];
 
   var userAgents = {
     eot: 'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)',
@@ -32,19 +33,27 @@ module.exports = function(grunt) {
     var done = this.async();
 
     options = this.options({
-      fontDir: './',
+      fontPath: './',
+      httpPath: false,
+      cssFile: false,
       formats: {
         eot: false,
         ttf: false,
         woff: true,
-        woff2: false,
+        woff2: true,
         svg: false
       },
       fonts: []
     });
 
-    if (options.fontDir[options.fontDir.length-1] !== '/')
-      options.fontDir += '/';
+    if (options.fontPath[options.fontPath.length-1] !== '/')
+      options.fontPath += '/';
+
+    if (!options.httpPath && options.fontPath[0] === '.')
+      options.httpPath = '/';
+
+    else if (!options.httpPath)
+      options.httpPath = options.fontPath;
 
     if (!options.formats.eot && !options.formats.ttf && !options.formats.woff && !options.formats.woff2 && !options.formats.svg)
       grunt.fail.fatal('No fonts formats specified');
@@ -53,12 +62,21 @@ module.exports = function(grunt) {
       grunt.fail.fatal('No fonts specified');
 
     var ready = 0;
+    var cssString = '';
 
     async.eachSeries(options.fonts, function(fontOptions, next) {
 
-      getFont(fontOptions, function() {
+      getFont(fontOptions, function(cssRules) {
 
         ready++;
+
+        if (options.cssFile) {
+
+        	cssRules.forEach(function(style) {
+        		cssString += createFontCss(style);
+        	});
+
+        }
 
         next();
 
@@ -66,9 +84,24 @@ module.exports = function(grunt) {
 
     }, function() {
 
-      grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
+    	if (options.cssFile) {
 
-      done();
+	      fs.writeFile(options.cssFile, cssString, function() {
+
+		      grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
+
+		      done();
+
+	      });
+
+	    }
+	    else {
+
+		      grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
+
+		      done();
+
+	    }
 
     });
 
@@ -82,6 +115,9 @@ module.exports = function(grunt) {
     if (!fontOptions.styles || !fontOptions.styles.length)
       grunt.fail.fatal('No font styles specified');
 
+    var cssRules = [];
+    var localFonts = [];
+    var srcFonts = [];
     var formatTotal = 0;
     var formatCount = 0;
 
@@ -90,13 +126,14 @@ module.exports = function(grunt) {
           formatTotal++;
     });
 
-    formatTotal *= fontOptions.styles.length;
 
-    Object.keys(options.formats).forEach(function(format) {
+    async.eachSeries(fontOptions.styles, function(style, next) {
 
-      if (options.formats[format]) {
+      formatCount = 0;
 
-        fontOptions.styles.forEach(function(style) {
+      Object.keys(options.formats).forEach(function(format) {
+
+        if (options.formats[format]) {
 
           var path = '/css?family=' + querystring.escape(fontOptions.family) + ':' + style;
 
@@ -118,40 +155,125 @@ module.exports = function(grunt) {
               return rule.type === 'fontface';
             });
 
-            async.eachSeries(rules, function(rule, next) {
+            rules.forEach(function(rule) {
 
+                var fontStyle = rule.declarations['font-style'];
+                var fontWeight = rule.declarations['font-weight'];
                 var fontUrl = rule.declarations.src.match(/url\((.+?)\)/)[1];
-                var fontFile = fontOptions.family.replace(/\s+/, '-').toLowerCase() + '-' + rule.declarations['font-weight'] + '.' + format;
+                var fontFormat = rule.declarations.src.match(/format\(\'(.+?)\'\)/);
+                var fontFile = fontOptions.family.replace(/\s+/, '-').toLowerCase() + '-' + fontWeight + '.' + format;
+                var fontNameLocal = rule.declarations.src.match(/local\(\'(.+?)\'\)/g);
+
+                if (fontNameLocal !== null) {
+                  fontNameLocal.forEach(function(localName) {
+                  	localName = localName.match(/local\(\'(.+?)\'\)/)[1];
+                    if (localFonts.indexOf(localName) === -1)
+                      localFonts.push(localName);
+                  });
+
+                }
+
+                srcFonts.push({
+                  src: fontFile,
+                  format: (fontFormat !== null ? fontFormat[1] : false)
+                });
 
                 downloadFont(fontUrl, function(data) {
 
-                  fs.writeFile(options.fontDir + fontFile, data, function() {
+                  fs.writeFile(options.fontPath + fontFile, data, function() {
 
-                    fileCount++;
+                    formatCount++;
 
-                    if (fileCount >= fileTotal)
+                    if (formatCount >= formatTotal) {
+
+                      cssRules.push({
+                      	name: fontOptions.family,
+                      	style: fontStyle,
+                      	weight: fontWeight,
+                        local: localFonts,
+                        src: srcFonts
+                      });
+
+                      localFonts = [];
+                      srcFonts = [];
+
                       next();
+
+                    }
 
                   });
 
                 });
 
-            }, function() {
-
-              formatCount++;
-
-              if (formatCount >= formatTotal)
-                cb();
-
             });
 
           });
 
-        });
+        }
 
-      }
+      });
+
+    }, function() {
+
+        cb(cssRules);
 
     });
+
+  }
+
+  var createFontCss = function(fontOptions) {
+
+    var cssString = '@font-face {\r\n';
+    cssString += '\tfont-family: \'' + fontOptions.name + '\';\r\n';
+    cssString += '\tfont-style: ' + fontOptions.style + ';\r\n';
+    cssString += '\tfont-weight: ' + fontOptions.weight + ';\r\n';
+    cssString += '\tsrc: ';
+
+    if (options.formats.eot) {
+
+	    fontOptions.src.forEach(function(src, i) {
+
+	    	if (!src.format) {
+
+	    		cssString += 'url(' + options.httpPath + src.src + ');\r\n';
+    			cssString += '\tsrc: ';
+
+	    		fontOptions.src.splice(i, 1);
+
+	    	}
+
+	    });
+
+    }
+
+    fontOptions.local.forEach(function(local, i) {
+
+    	if (i > 0)
+    		cssString += ', ';
+
+    	cssString += 'local(\'' + local + '\')';
+
+    });
+
+    if (fontOptions.local.length)
+    	cssString += ', ';
+
+    fontOptions.src.forEach(function(src, i) {
+
+    	if (i > 0)
+    		cssString += ', ';
+
+    	if (src.format === 'svg')
+    		cssString += 'url(' + options.httpPath + src.src + '#' + fontOptions.name.replace(/[^a-z0-9]/i, '') + ') format(\'' + src.format + '\')';
+
+    	else
+    		cssString += 'url(' + options.httpPath + src.src + ') format(\'' + src.format + '\')';
+
+    });
+
+    cssString += ';\r\n}\r\n';
+
+    return cssString;
 
   }
 
