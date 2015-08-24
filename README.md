@@ -1,13 +1,42 @@
 # grunt-google-fonts
 
-### Usage examples
+## Getting Started
+You can install this plugin directly from Github:
+```shell
+npm install mika-/grunt-google-fonts
+```
 
-After installing the plugin enable it in your Gruntfile.
+Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 ```js
 grunt.loadNpmTasks('grunt-google-fonts');
 ```
 
-Configure target with needed fonts, styles and subsets. 
+### Usage examples
+
+Configure target with needed fonts and styles
+```js
+// Project configuration.
+grunt.initConfig({
+  googlefonts: {
+    build: {
+      options: {
+        fontPath: 'fonts/',
+        cssFile: 'fonts/fonts.css',
+        fonts: [
+          {
+            family: 'Open Sans',
+            styles: [
+              400, 700
+            ]
+          }
+        ]
+      }
+    }
+  }
+});
+```
+
+If you need more browser and charset support, this example is for you
 ```js
 // Project configuration.
 grunt.initConfig({
@@ -21,7 +50,7 @@ grunt.initConfig({
           ttf: true,
           woff: true,
           woff2: true,
-          svg: false
+          svg: true
         },
         fonts: [
           {
