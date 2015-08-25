@@ -229,16 +229,30 @@ module.exports = function(grunt) {
     cssString += '\tfont-weight: ' + fontOptions.weight + ';\r\n';
     cssString += '\tsrc: ';
 
+    var sortMap = function(val) {
+      if (val.src.match(/\.eot$/))
+        return 0;
+      else if (val.src.match(/\.woff2$/))
+        return 1;
+      else if (val.src.match(/\.woff$/))
+        return 2;
+      else if (val.src.match(/\.ttf$/))
+        return 3;
+      return 4;
+    };
+
+    fontOptions.src.sort(function(a, b) {
+      return sortMap(a) - sortMap(b);
+    });
+
     if (options.formats.eot) {
 
 	    fontOptions.src.forEach(function(src, i) {
 
-	    	if (!src.format) {
+	    	if (src.src.match(/\.eot$/)) {
 
 	    		cssString += 'url(' + options.httpPath + src.src + ');\r\n';
     			cssString += '\tsrc: ';
-
-	    		fontOptions.src.splice(i, 1);
 
 	    	}
 
@@ -263,7 +277,10 @@ module.exports = function(grunt) {
     	if (i > 0)
     		cssString += ', ';
 
-    	if (src.format === 'svg')
+      if (src.src.match(/\.eot$/))
+        cssString += 'url(' + options.httpPath + src.src + '?#iefix) format(\'embedded-opentype\')';
+
+    	else if (src.src.match(/\.svg$/))
     		cssString += 'url(' + options.httpPath + src.src + '#' + fontOptions.name.replace(/[^a-z0-9]/i, '') + ') format(\'' + src.format + '\')';
 
     	else
