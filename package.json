@@ -1,13 +1,35 @@
 {
   "name": "grunt-google-fonts",
-  "version": "0.0.1",
-  "description": "Use Google Fonts locally",
-  "main": "tasks/index.js",
+  "description": "Download Google Fonts in Grunt jobs",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Mika-/grunt-google-fonts",
+  "license": "MIT",
+  "author": {
+    "name": "Mika Simanainen",
+    "email": "mika.simanainen+npm@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Mika-/grunt-google-fonts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mika-/grunt-google-fonts/issues"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.5"
+  },
   "keywords": [
-    "grunt",
+    "gruntplugin",
+    "font",
+    "fonts",
+    "webfont",
+    "webfonts",
+    "google",
     "google fonts"
   ],
-  "license": "MIT",
   "dependencies": {
     "async": "^1.4.2",
     "cssparser": "^0.2.2"

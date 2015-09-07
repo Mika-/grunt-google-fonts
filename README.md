@@ -1,21 +1,85 @@
 # grunt-google-fonts
 
+> Download Google Fonts in Grunt jobs
+
 ## Getting Started
-You can install this plugin directly from Github:
+This plugin requires Grunt `~0.4.5`
+
+If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
+
 ```shell
-npm install mika-/grunt-google-fonts
+npm install grunt-google-fonts --save-dev
 ```
 
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
+
 ```js
 grunt.loadNpmTasks('grunt-google-fonts');
 ```
 
-### Usage examples
+## The "googlefonts" task
 
-Configure target with needed fonts and styles
+### Options
+
+#### options.fontPath
+Type: `String`
+Default value: `./`
+
+Specify directory to store fonts.
+
+#### options.cssFile
+Type: `String` `Boolean`
+Default value: `false`
+
+Path to store the generated css file.
+
+#### options.httpPath
+Type: `String` `Boolean`
+Default value: `false`
+
+Override http path in css file. This helps if you are hosting fonts from the CDN domain (eg. value `https://my-super-fast.cdn/fonts/` will set the font path as `https://my-super-fast.cdn/fonts/open-sans-300.woff`). On false this will fallback to `fontPath`.
+
+#### options.formats
+Type: `Object`
+Default value: `{
+  eot: false,
+  ttf: false,
+  woff: true,
+  woff2: true,
+  svg: false
+}`
+
+Set formats to download. Defaults to woff/woff2 that covers all modern browsers.
+For more information about format support, see caniuse entries for [EOT](http://caniuse.com/#feat=eot), [TTF](http://caniuse.com/#feat=ttf), [WOFF](http://caniuse.com/#feat=woff), [WOFF2](http://caniuse.com/#feat=woff2) and [SVG](http://caniuse.com/#feat=svg-fonts).
+
+#### options.fonts
+Type: `Array`
+Default value: `[]`
+
+Fonts to download. This is an array of objects with font specific config.
+
+#### font.family
+Type: `String`
+
+Font name.
+
+#### font.styles
+Type: `Array`
+
+Array of font styles. Eg. `[300]` or `[300, 400, '400italic']`.
+
+#### font.subsets
+Type: `Array`
+
+Array of font subset. Eg. `['latin', 'cyrillic']`.
+
+
+### Usage Examples
+
+#### Basic Options
+This example includes all the functionality needed for basic use.
+
 ```js
-// Project configuration.
 grunt.initConfig({
   googlefonts: {
     build: {
@@ -36,9 +100,10 @@ grunt.initConfig({
 });
 ```
 
-If you need more browser and charset support, this example is for you
+#### Custom Options
+If you need more browser and charset support, this example is for you.
+
 ```js
-// Project configuration.
 grunt.initConfig({
   googlefonts: {
     build: {

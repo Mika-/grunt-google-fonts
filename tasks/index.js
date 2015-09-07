@@ -1,5 +1,6 @@
 /*
  * grunt-google-fonts
+ * https://github.com/Mika-/grunt-google-fonts
  *
  * Copyright (c) 2015 Mika Simanainen
  * Licensed under the MIT license.
@@ -254,6 +255,8 @@ module.exports = function(grunt) {
 	    		cssString += 'url(' + options.httpPath + src.src + ');\r\n';
     			cssString += '\tsrc: ';
 
+    			fontOptions.src.splice(i, 1);
+
 	    	}
 
 	    });
@@ -277,10 +280,7 @@ module.exports = function(grunt) {
     	if (i > 0)
     		cssString += ', ';
 
-      if (src.src.match(/\.eot$/))
-        cssString += 'url(' + options.httpPath + src.src + '?#iefix) format(\'embedded-opentype\')';
-
-    	else if (src.src.match(/\.svg$/))
+      if (src.src.match(/\.svg$/))
     		cssString += 'url(' + options.httpPath + src.src + '#' + fontOptions.name.replace(/[^a-z0-9]/i, '') + ') format(\'' + src.format + '\')';
 
     	else
