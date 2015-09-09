@@ -147,6 +147,9 @@ module.exports = function(grunt) {
 
           }
 
+          if (fontOptions.text && fontOptions.text.length)
+          	path += '&text=' + querystring.escape(fontOptions.text);
+
           downloadFontCss(userAgents[format], path, function(css) {
 
             var fileTotal = 0;

@@ -73,6 +73,11 @@ Type: `Array`
 
 Array of font subsets. Eg. `['latin', 'cyrillic']`.
 
+#### font.text
+Type: `String`
+
+Restrict font to specified letters to make it smaller.
+
 
 ### Usage Examples
 
@@ -132,6 +137,13 @@ grunt.initConfig({
             family: 'Droid Sans',
             styles: [
               400, 700
+            ]
+          },
+          {
+            family: 'Lato',
+            text: 'My logo',
+            styles: [
+              400
             ]
           }
         ]
