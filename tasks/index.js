@@ -138,12 +138,12 @@ module.exports = function(grunt) {
 
           var path = '/css?family=' + querystring.escape(fontOptions.family) + ':' + style;
 
-          if (fontOptions.subset && fontOptions.subset.length) {
+          if (fontOptions.subsets && fontOptions.subsets.length) {
 
-            if (fontOptions.subset.indexOf('latin'))
-              fontOptions.subset.push('latin');
+            if (fontOptions.subsets.indexOf('latin'))
+              fontOptions.subsets.push('latin');
 
-            path += '&subset=' + fontOptions.subset.join(',');
+            path += '&subset=' + fontOptions.subsets.join(',');
 
           }
 

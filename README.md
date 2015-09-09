@@ -71,7 +71,7 @@ Array of font styles. Eg. `[300]` or `[300, 400, '400italic']`.
 #### font.subsets
 Type: `Array`
 
-Array of font subset. Eg. `['latin', 'cyrillic']`.
+Array of font subsets. Eg. `['latin', 'cyrillic']`.
 
 
 ### Usage Examples
@@ -120,7 +120,7 @@ grunt.initConfig({
         fonts: [
           {
             family: 'Open Sans',
-            subset: [
+            subsets: [
               'latin',
               'cyrillic'
             ],
