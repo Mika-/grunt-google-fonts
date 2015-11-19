@@ -10,6 +10,7 @@
 
 var async = require('async');
 var http = require('http');
+var path = require('path');
 var url = require('url');
 var fs = require('fs');
 var querystring = require('querystring');
@@ -61,6 +62,11 @@ module.exports = function(grunt) {
 
     if (!options.fonts || !options.fonts.length)
       grunt.fail.fatal('No fonts specified');
+
+    checkDirExists(options.fontPath);
+
+    if (options.cssFile)
+      checkDirExists(path.dirname(options.cssFile));
 
     var ready = 0;
     var cssString = '';
@@ -347,6 +353,23 @@ module.exports = function(grunt) {
           cb(new Buffer(buffer, 'binary'));
 
       });
+
+    });
+
+  }
+
+  var checkDirExists = function(dirPath) {
+
+    dirPath = dirPath.split('/');
+
+    var tmp = '';
+
+    dirPath.forEach(function(dir) {
+
+      tmp += dir + '/';
+
+      if (!fs.existsSync(tmp))
+        fs.mkdirSync(tmp);
 
     });
 
