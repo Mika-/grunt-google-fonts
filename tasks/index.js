@@ -73,9 +73,9 @@ module.exports = function(grunt) {
 
         if (options.cssFile) {
 
-        	cssRules.forEach(function(style) {
-        		cssString += createFontCss(style);
-        	});
+          cssRules.forEach(function(style) {
+            cssString += createFontCss(style);
+          });
 
         }
 
@@ -85,24 +85,24 @@ module.exports = function(grunt) {
 
     }, function() {
 
-    	if (options.cssFile) {
+      if (options.cssFile) {
 
-	      fs.writeFile(options.cssFile, cssString, function() {
+        fs.writeFile(options.cssFile, cssString, function() {
 
-		      grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
+          grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
 
-		      done();
+          done();
 
-	      });
+        });
 
-	    }
-	    else {
+      }
+      else {
 
-		      grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
+          grunt.log.ok(ready + ' ' + grunt.util.pluralize(ready, 'font/fonts') + ' downloaded.');
 
-		      done();
+          done();
 
-	    }
+      }
 
     });
 
@@ -148,7 +148,7 @@ module.exports = function(grunt) {
           }
 
           if (fontOptions.text && fontOptions.text.length)
-          	path += '&text=' + querystring.escape(fontOptions.text);
+            path += '&text=' + querystring.escape(fontOptions.text);
 
           downloadFontCss(userAgents[format], path, function(css) {
 
@@ -170,7 +170,7 @@ module.exports = function(grunt) {
 
                 if (fontNameLocal !== null) {
                   fontNameLocal.forEach(function(localName) {
-                  	localName = localName.match(/local\(\'(.+?)\'\)/)[1];
+                    localName = localName.match(/local\(\'(.+?)\'\)/)[1];
                     if (localFonts.indexOf(localName) === -1)
                       localFonts.push(localName);
                   });
@@ -191,9 +191,9 @@ module.exports = function(grunt) {
                     if (formatCount >= formatTotal) {
 
                       cssRules.push({
-                      	name: fontOptions.family,
-                      	style: fontStyle,
-                      	weight: fontWeight,
+                        name: fontOptions.family,
+                        style: fontStyle,
+                        weight: fontWeight,
                         local: localFonts,
                         src: srcFonts
                       });
@@ -251,43 +251,43 @@ module.exports = function(grunt) {
 
     if (options.formats.eot) {
 
-	    fontOptions.src.forEach(function(src, i) {
+      fontOptions.src.forEach(function(src, i) {
 
-	    	if (src.src.match(/\.eot$/)) {
+        if (src.src.match(/\.eot$/)) {
 
-	    		cssString += 'url(' + options.httpPath + src.src + ');\r\n';
-    			cssString += '\tsrc: ';
+          cssString += 'url(' + options.httpPath + src.src + ');\r\n';
+          cssString += '\tsrc: ';
 
-    			fontOptions.src.splice(i, 1);
+          fontOptions.src.splice(i, 1);
 
-	    	}
+        }
 
-	    });
+      });
 
     }
 
     fontOptions.local.forEach(function(local, i) {
 
-    	if (i > 0)
-    		cssString += ', ';
+      if (i > 0)
+        cssString += ', ';
 
-    	cssString += 'local(\'' + local + '\')';
+      cssString += 'local(\'' + local + '\')';
 
     });
 
     if (fontOptions.local.length)
-    	cssString += ', ';
+      cssString += ', ';
 
     fontOptions.src.forEach(function(src, i) {
 
-    	if (i > 0)
-    		cssString += ', ';
+      if (i > 0)
+        cssString += ', ';
 
       if (src.src.match(/\.svg$/))
-    		cssString += 'url(' + options.httpPath + src.src + '#' + fontOptions.name.replace(/[^a-z0-9]/i, '') + ') format(\'' + src.format + '\')';
+        cssString += 'url(' + options.httpPath + src.src + '#' + fontOptions.name.replace(/[^a-z0-9]/i, '') + ') format(\'' + src.format + '\')';
 
-    	else
-    		cssString += 'url(' + options.httpPath + src.src + ') format(\'' + src.format + '\')';
+      else
+        cssString += 'url(' + options.httpPath + src.src + ') format(\'' + src.format + '\')';
 
     });
 
