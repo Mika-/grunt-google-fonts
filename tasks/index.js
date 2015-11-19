@@ -136,21 +136,21 @@ module.exports = function(grunt) {
 
         if (options.formats[format]) {
 
-          var path = '/css?family=' + querystring.escape(fontOptions.family) + ':' + style;
+          var fontUrl = '/css?family=' + querystring.escape(fontOptions.family) + ':' + style;
 
           if (fontOptions.subsets && fontOptions.subsets.length) {
 
             if (fontOptions.subsets.indexOf('latin'))
               fontOptions.subsets.push('latin');
 
-            path += '&subset=' + fontOptions.subsets.join(',');
+            fontUrl += '&subset=' + fontOptions.subsets.join(',');
 
           }
 
           if (fontOptions.text && fontOptions.text.length)
-            path += '&text=' + querystring.escape(fontOptions.text);
+            fontUrl += '&text=' + querystring.escape(fontOptions.text);
 
-          downloadFontCss(userAgents[format], path, function(css) {
+          downloadFontCss(userAgents[format], fontUrl, function(css) {
 
             var fileTotal = 0;
             var fileCount = 0;
@@ -297,11 +297,11 @@ module.exports = function(grunt) {
 
   }
 
-  var downloadFontCss = function(userAgent, path, cb) {
+  var downloadFontCss = function(userAgent, fontUrl, cb) {
 
     var req = http.get({
       host: 'fonts.googleapis.com',
-      path: path,
+      path: fontUrl,
       headers: {
         'User-Agent': userAgent
       }
@@ -324,13 +324,13 @@ module.exports = function(grunt) {
 
   }
 
-  var downloadFont = function(path, cb) {
+  var downloadFont = function(fontUrl, cb) {
 
-    path = url.parse(path);
+    fontUrl = url.parse(fontUrl);
 
     var req = http.get({
-      host: path.hostname,
-      path: path.path
+      host: fontUrl.hostname,
+      path: fontUrl.path
     }, function(res) {
 
       res.setEncoding('binary');
