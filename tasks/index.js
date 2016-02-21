@@ -171,7 +171,7 @@ module.exports = function(grunt) {
                 var fontWeight = rule.declarations['font-weight'];
                 var fontUrl = rule.declarations.src.match(/url\((.+?)\)/)[1];
                 var fontFormat = rule.declarations.src.match(/format\(\'(.+?)\'\)/);
-                var fontFile = fontOptions.family.replace(/\s+/, '-').toLowerCase() + '-' + fontWeight + '-' + fontStyle + '.' + format;
+                var fontFile = fontOptions.family.replace(/\s+/g, '-').toLowerCase() + '-' + fontWeight + '-' + fontStyle + '.' + format;
                 var fontNameLocal = rule.declarations.src.match(/local\(\'(.+?)\'\)/g);
 
                 if (fontNameLocal !== null) {
