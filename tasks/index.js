@@ -324,9 +324,18 @@ module.exports = function(grunt) {
         if (res.statusCode === 200)
           cb(buffer);
 
+        else
+          grunt.fail.fatal('HTTP Status ' + res.statusCode + ' http://fonts.googleapis.com' + fontUrl);
+
       });
 
     });
+
+    req.on('error', function(e) {
+      grunt.fail.fatal('Failed to download css: ' + e.message);
+    });
+
+    req.end();
 
   }
 
@@ -352,9 +361,18 @@ module.exports = function(grunt) {
         if (res.statusCode === 200)
           cb(new Buffer(buffer, 'binary'));
 
+        else
+          grunt.fail.fatal('HTTP Status ' + res.statusCode + ' http://' + fontUrl.hostname + fontUrl.path);
+
       });
 
     });
+
+    req.on('error', function(e) {
+      grunt.fail.fatal('Failed to download font: ' + e.message);
+    });
+
+    req.end();
 
   }
 
