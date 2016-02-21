@@ -1,7 +1,7 @@
 {
   "name": "grunt-google-fonts",
   "description": "Download Google Fonts in Grunt jobs",
-  "version": "0.3.0",
+  "version": "0.3.5",
   "homepage": "https://github.com/Mika-/grunt-google-fonts",
   "license": "MIT",
   "author": {
