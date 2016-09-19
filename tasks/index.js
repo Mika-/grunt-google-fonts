@@ -9,7 +9,7 @@
 'use strict';
 
 var async = require('async');
-var http = require('http');
+var request = require('request');
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
@@ -304,76 +304,34 @@ module.exports = function(grunt) {
   }
 
   var downloadFontCss = function(userAgent, fontUrl, cb) {
-
-    var req = http.get({
-      host: 'fonts.googleapis.com',
-      path: fontUrl,
+    var url = 'http://fonts.googleapis.com' + fontUrl;
+    var options = {
+      url: url,
       headers: {
         'User-Agent': userAgent
       }
-    }, function(res) {
-
-      var buffer = '';
-
-      res.on('data', function(chunk) {
-        buffer += chunk;
-      });
-
-      res.on('end', function() {
-
-        if (res.statusCode === 200)
-          cb(buffer);
-
-        else
-          grunt.fail.fatal('HTTP Status ' + res.statusCode + ' http://fonts.googleapis.com' + fontUrl);
-
-      });
-
-    });
-
-    req.on('error', function(e) {
-      grunt.fail.fatal('Failed to download css: ' + e.message);
-    });
-
-    req.end();
-
+    };
+    request( options, function (error, response, body) {
+      if(error) {
+        grunt.fail.fatal('GET ' + url + ' failed: ' + error );
+      } else {
+        cb( body );
+      }
+    } );
   }
 
   var downloadFont = function(fontUrl, cb) {
-
-    fontUrl = url.parse(fontUrl);
-
-    var req = http.get({
-      host: fontUrl.hostname,
-      path: fontUrl.path
-    }, function(res) {
-
-      res.setEncoding('binary');
-
-      var buffer = '';
-
-      res.on('data', function(chunk) {
-        buffer += chunk;
-      });
-
-      res.on('end', function() {
-
-        if (res.statusCode === 200)
-          cb(new Buffer(buffer, 'binary'));
-
-        else
-          grunt.fail.fatal('HTTP Status ' + res.statusCode + ' http://' + fontUrl.hostname + fontUrl.path);
-
-      });
-
-    });
-
-    req.on('error', function(e) {
-      grunt.fail.fatal('Failed to download font: ' + e.message);
-    });
-
-    req.end();
-
+    var options = {
+      url: fontUrl,
+      encoding: null
+    };
+    request( options, function (error, response, body) {
+      if(error) {
+        grunt.fail.fatal('GET ' + fontUrl + ' failed: ' + error );
+      } else {
+        cb( body );
+      }
+    } );
   }
 
   var checkDirExists = function(dirPath) {
