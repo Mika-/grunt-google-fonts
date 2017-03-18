@@ -304,7 +304,7 @@ module.exports = function(grunt) {
   }
 
   var downloadFontCss = function(userAgent, fontUrl, cb) {
-    var url = 'http://fonts.googleapis.com' + fontUrl;
+    var url = 'https://fonts.googleapis.com' + fontUrl;
     var options = {
       url: url,
       headers: {
