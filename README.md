@@ -3,10 +3,14 @@
 > Download Google Fonts in Grunt jobs
 
 ## Getting Started
-This plugin requires Grunt `~0.4.5`
+This plugin requires Grunt `>=0.4.5`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
+```shell
+yarn add -D grunt-google-fonts
+```
+or
 ```shell
 npm install grunt-google-fonts --save-dev
 ```
@@ -33,6 +37,12 @@ Default value: `false`
 
 Path to store the generated css file.
 
+#### options.cssFileLegacy
+Type: `String` `Boolean`
+Default value: `false`
+
+Path to store the generated legacy (non woff2) css file.
+
 #### options.httpPath
 Type: `String` `Boolean`
 Default value: `false`
@@ -44,12 +54,12 @@ Type: `Object`
 Default value: `{
   eot: false,
   ttf: false,
-  woff: true,
+  woff: false,
   woff2: true,
   svg: false
 }`
 
-Set formats to download. Defaults to woff/woff2 that covers all modern browsers.
+Set formats to download. Defaults to woff2 that covers all modern browsers.
 For more information about format support, see caniuse entries for [EOT](http://caniuse.com/#feat=eot), [TTF](http://caniuse.com/#feat=ttf), [WOFF](http://caniuse.com/#feat=woff), [WOFF2](http://caniuse.com/#feat=woff2) and [SVG](http://caniuse.com/#feat=svg-fonts).
 
 #### options.fonts
@@ -71,7 +81,7 @@ Array of font styles. Eg. `[300]` or `[300, 400, '400italic']`.
 #### font.subsets
 Type: `Array`
 
-Array of font subsets. Eg. `['latin', 'cyrillic']`.
+Array of font subsets. Eg. `['latin', 'cyrillic']`. This option is ommitted on woff2 fonts.
 
 #### font.text
 Type: `String`
@@ -117,9 +127,7 @@ grunt.initConfig({
         cssFile: 'fonts/fonts.css',
         formats: {
           eot: true,
-          ttf: true,
           woff: true,
-          woff2: true,
           svg: true
         },
         fonts: [
