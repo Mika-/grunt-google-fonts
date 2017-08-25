@@ -153,12 +153,14 @@ module.exports = function(grunt) {
                 if (options.formats[format]) {
 
                     var fontUrl = '/css?family=' + querystring.escape(fontOptions.family) + ':' + style;
+                    var subsets = [ 'latin' ];
 
                     if (fontOptions.subsets && fontOptions.subsets.length) {
 
                         if (fontOptions.subsets.indexOf('latin'))
                             fontOptions.subsets.push('latin');
 
+                        subsets = fontOptions.subsets;
                         fontUrl += '&subset=' + fontOptions.subsets.join(',');
 
                     }
@@ -176,6 +178,13 @@ module.exports = function(grunt) {
                         });
                         var rules = parser.parse(css).stylesheet.rules.filter(function(rule) {
                             return rule.type === 'font-face';
+                        });
+                        if (comments.length !== rules.length) {
+                            throw Exception("malformed CSS file");
+                        }
+                        rules = rules.filter(function (rule, i) {
+                            rule.subset = comments[i].comment.replace(/\s+/g, '');
+                            return subsets.indexOf(rule.subset) !== -1
                         });
 
                         rules.forEach(function(rule, i) {
@@ -199,8 +208,7 @@ module.exports = function(grunt) {
                             });
 
                             var fontSubset = '';
-                            if (comments[i])
-                                fontSubset = '-' + comments[i].comment.replace(/\s+/g, '');
+                            fontSubset = '-' + rule.subset;
 
                             var fontFile = fontOptions.family.replace(/\s+/g, '-').toLowerCase() + '-' + fontWeight + '-' + fontStyle + fontSubset + '.' + format;
 
@@ -233,7 +241,6 @@ module.exports = function(grunt) {
                                     unicodeRange: (unicodeRange ? unicodeRange.value : null)
                                 };
                             }
-
                             downloadFont(fontUrl, function(data) {
 
                                 fs.writeFile(options.fontPath + fontFile, data, function() {
